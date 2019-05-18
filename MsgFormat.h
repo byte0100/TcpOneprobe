@@ -16,6 +16,7 @@ typedef  struct MessageHeader
 {
     unsigned char               messageHeader[4];   //协议头 区分不同协议 iSCSSI协议：“CC_I” other协议：“CC_O”
     short                       controlMask;        //操作码 区分同一协议不同命令
+    int                         dataSize;           //传输数据的总大小
 }MsgHeader;
 
 #endif //AGENTV2_MSGFORMAT_H

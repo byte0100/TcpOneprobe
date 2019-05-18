@@ -1,11 +1,13 @@
 //
 // Created by 54766 on 2019/5/13.
+// update v1.1 5/18 1.更新recv write函数的size参数（缓冲区大小）以及缓冲区变量名 #bug#
+//                  2.实现probe端指定data大小的功能
 //
 
 #include "TCPServer.h"
 #include "MsgFormat.h"
 
-#define  BUF_SIZE 512
+//#define  DATA_SIZE 512
 
 void* handle_clnt(void* arg);
 
@@ -75,39 +77,41 @@ int main(int argc, char* argv[]){
 void* handle_clnt(void* arg){
     int clnt_sock = *((int*) arg);
     int str_len;
+    int dataSize = 0; // 生成的data总大小
     MsgHeader* clnt_msgheader = (MsgHeader*)malloc(sizeof(MsgHeader));
 
+
     int msgsize = sizeof(MsgHeader);
-    char* buffer = (char*)malloc(msgsize);
+//    printf("msgsize = %d\n", msgsize); // 测试msgsize
+    char* msgbuffer = (char*)malloc(msgsize);
 
     char* data;
-    data = (char*) malloc(BUF_SIZE);
+//    data = (char*) malloc(DATA_SIZE); 移动到line 98
 
-    while((str_len = recv(clnt_sock, buffer, sizeof(buffer), 0))){
-//        printf("buffer = %s\n", buffer);
+    while((str_len = recv(clnt_sock, msgbuffer, msgsize, 0))){
+        printf("msgbuffer = %s\n", msgbuffer);
+        printf("recv size = %d\n", str_len);
         memset(clnt_msgheader,0,msgsize);
-        memcpy(clnt_msgheader, buffer, msgsize);
-//        printf("recv from client %d messageHeader = %s controlMask = %d\n", clnt_sock, clnt_msgheader->messageHeader,
-//                clnt_msgheader->controlMask); //检验是否正确解析收到的控制命令
+        memcpy(clnt_msgheader, msgbuffer, msgsize);
+        printf("recv from client %d messageHeader = %s controlMask = %d dataSize = %d\n", clnt_sock, clnt_msgheader->messageHeader,
+                clnt_msgheader->controlMask, clnt_msgheader->dataSize); //检验是否正确解析收到的控制命令
         if(clnt_msgheader->messageHeader[3] == 'O'){
             if(clnt_msgheader->controlMask == CONTROL_INIT){   //Init
+                dataSize = clnt_msgheader->dataSize;
+                data = (char*) malloc(dataSize); // INIT只执行一次 开销不大
                 char replybuf[4] = "ACK";
                 str_len = write(clnt_sock, replybuf, sizeof(replybuf));
-                Generate_str(data, BUF_SIZE); // 生成内容
-//                printf("CONTROL_INIT, write = %d\n",str_len ); //检查是否到达CONTROL_INIT状态
+                Generate_str(data, dataSize); // 生成内容
+                printf("CONTROL_INIT, write = %d\n",str_len ); //检查是否到达CONTROL_INIT状态
             }
 
             if(clnt_msgheader->controlMask == CONTROL_ACK){
-                write(clnt_sock, data, BUF_SIZE);
+                send(clnt_sock, data, dataSize, 0);
             }
 
             if(clnt_msgheader->controlMask == CONTROL_GET){
-                int pos = 0;
-                while (pos < BUF_SIZE){
-                    str_len = send(clnt_sock, data+pos, sizeof(data),0);
-                    pos += str_len;
-                }
-//                printf("CONTROL_GET, write = %d\n",str_len); //检查是否到达CONTROL_GET
+                str_len = send(clnt_sock, data, dataSize,0);  // todo 修改了之前的问题 还没测试 可能需要循环发送？
+                printf("CONTROL_GET, write = %d\n",str_len); //检查是否到达CONTROL_GET
             }
         }
     }

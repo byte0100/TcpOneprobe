@@ -5,7 +5,7 @@
 #include "TCPServer.h"
 #include "MsgFormat.h"
 
-#define  BUF_SIZE 512
+#define  DATA_SIZE 512 //测试客户端 指定生成的data总大小
 
 int main(int argc, char* argv[]){
     int sock;
@@ -34,10 +34,12 @@ int main(int argc, char* argv[]){
     memset(&myMsg1,0, sizeof(myMsg1));
     strcpy(myMsg1.messageHeader,"CC_O");
     myMsg1.controlMask = CONTROL_INIT;
+    myMsg1.dataSize = DATA_SIZE;
     char buf[sizeof(myMsg1)] = {0};
-    char recvBuf[BUF_SIZE] = {0};
+    char recvBuf[DATA_SIZE] = {0};
     memcpy(buf,&myMsg1, sizeof(myMsg1));
-    int ret = write(sock,buf, sizeof(myMsg1));
+    int ret = send(sock,buf, sizeof(myMsg1),0);
+    printf("send_init size = %d\n", ret);
     if(ret < 0){
         error_handling("write() error");
     }
@@ -46,7 +48,7 @@ int main(int argc, char* argv[]){
     if(ret < 0){
         error_handling("write() error");
     }
-    printf("recv from server %s\n", recvBuf);
+    printf("recv_INIT from server %s\n", recvBuf);
 
     MsgHeader myMsg2;
     memset(&myMsg2,0, sizeof(myMsg2));
@@ -61,7 +63,7 @@ int main(int argc, char* argv[]){
         error_handling("write() error");
     }
     int pos = 0;
-    while(pos < BUF_SIZE){
+    while(pos < DATA_SIZE){
         ret = recv(sock,recvBuf+pos, sizeof(recvBuf),0);
         pos += ret;
     }
@@ -69,7 +71,7 @@ int main(int argc, char* argv[]){
     if(ret < 0){
         error_handling("write() error");
     }
-    printf("recv2 from server %s,size of recvBuf = %ld\n", recvBuf, sizeof(recvBuf));
+    printf("recv2 from server %s,size of recvBuf = %d\n", recvBuf, pos);
     sleep(20);
     close(sock);
     return 0;
