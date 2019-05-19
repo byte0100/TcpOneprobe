@@ -2,12 +2,15 @@
 // Created by 54766 on 2019/5/13.
 // update v1.1 5/18 1.更新recv write函数的size参数（缓冲区大小）以及缓冲区变量名 #bug#
 //                  2.实现probe端指定data大小的功能
+//        v1.2 5/19 1.更新epoll多路复用功能
+//                  2.todo 线程池
 //
 
 #include "TCPServer.h"
 #include "MsgFormat.h"
 
 //#define  DATA_SIZE 512
+#define EPOLL_SIZE 1000
 
 void* handle_clnt(void* arg);
 
@@ -30,6 +33,11 @@ int main(int argc, char* argv[]){
     int clnt_adr_sz;
     int clnt_count = 0;
 
+    struct  epoll_event *ep_events;
+    struct  epoll_event event;
+    int epfd, event_cnt;
+
+
 
     if(argc != 2){
         printf("Usage : %s <port>\n", argv[0]);
@@ -50,27 +58,60 @@ int main(int argc, char* argv[]){
         error_handling("bind() error");
     }
 
-    if(listen(serv_sock, 10) == 5){
+    if(listen(serv_sock, 10) == -1){
         error_handling("listen() error");
     }
 
-    while(1){
-        clnt_adr_sz = sizeof(clnt_adr);
-        clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
-        if(clnt_sock > 0){
-            clnt_count++;
-            printf("%d client connect\n", clnt_count);//第clnt_count个客户端连接
-            pthread_create(&t_id, NULL, handle_clnt, (void*)&clnt_sock);
-            pthread_detach(t_id);
+    if((epfd = epoll_create(EPOLL_SIZE) )== -1){
+        error_handling("epoll_create() error");
+    }
+    ep_events = (struct epoll_event*)malloc(sizeof(struct epoll_event) * EPOLL_SIZE);
 
-        }else{
-            error_handling("accept() error");
+    event.events = EPOLLIN;
+    event.data.fd = serv_sock;
+    epoll_ctl(epfd,EPOLL_CTL_ADD,serv_sock,&event);
+
+    while(1){
+        event_cnt = epoll_wait(epfd,ep_events,EPOLL_SIZE,-1);
+        if(event_cnt == -1){
+            puts("epoll_wait() error");
+            break;
         }
+
+        for(int i =0; i<event_cnt; i++){
+            if(ep_events[i].data.fd == serv_sock){
+                // todo
+                clnt_adr_sz = sizeof(clnt_adr);
+                clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
+                if(clnt_sock > 0){
+                    clnt_count++;
+                    printf("%d client connect\n", clnt_count);//第clnt_count个客户端连接
+                    pthread_create(&t_id, NULL, handle_clnt, (void*)&clnt_sock);
+                    pthread_detach(t_id); //可以交由子线程自己detach agent主线程应该不需要子线程的返回值
+
+                }else{
+                    error_handling("accept() error");
+                }
+            }
+        }
+
+//        clnt_adr_sz = sizeof(clnt_adr);
+//        clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
+//        if(clnt_sock > 0){
+//            clnt_count++;
+//            printf("%d client connect\n", clnt_count);//第clnt_count个客户端连接
+//            pthread_create(&t_id, NULL, handle_clnt, (void*)&clnt_sock);
+//            pthread_detach(t_id);
+//
+//        }else{
+//            error_handling("accept() error");
+//        }
         //todo 退出机制
         printf("Connected client Port: %d \n", ntohs(clnt_adr.sin_port));
     }
 
     close(serv_sock);
+    close(epfd);
     return 0;
 }
 

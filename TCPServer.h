@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <pthread.h>
+#include <sys/epoll.h>
 
 #define  error_handling(message) {fputs(message,stderr);fputc('\n',stderr);exit(1);}
 
