@@ -72,7 +72,7 @@ int main(int argc, char* argv[]){
         error_handling("write() error");
     }
     printf("recv2 from server %s,size of recvBuf = %d\n", recvBuf, pos);
-    sleep(20);
+//    sleep(20);
     close(sock);
     return 0;
 }
