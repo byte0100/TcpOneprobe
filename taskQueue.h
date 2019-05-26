@@ -6,6 +6,7 @@
 #define AGENTV2_TASKQUEUE_H
 
 #include <stdbool.h>
+#include <string.h>
 
 #define MAX_LINK 1000
 
@@ -17,32 +18,12 @@ typedef struct  Queue{  //整型循环队列
     int size;
 }Queue;
 
-void queue_init(Queue *queue){
-    queue->front = 0;
-    queue->rear = 0;
-    queue->size = 0;
-    bzero(queue->fd, sizeof(queue->fd));
-}
+void queue_init(Queue *queue);
 
-bool queue_add(Queue* queue, int clnt_sock){
-    if (queue->size == MAX_LINK) return  false; //队满
-    queue->fd[queue->rear] = clnt_sock;
-    queue->rear = (queue->rear + 1) % MAX_LINK;
-    queue->size++;
-    return  true;
-}
+bool queue_add(Queue* queue, int clnt_sock);
 
-int queue_pop(Queue* queue){    //返回队尾元素
-    if (queue->size == 0) return -1; //队空
-    int temp = -1;
-    temp = queue->fd[queue->front];
-    queue->front = (queue->front + 1) % MAX_LINK;
-    queue->size--;
-    return temp;
-}
+int queue_pop(Queue* queue);
 
-int queue_size(Queue* queue){   //队列当前长度
-    return queue->size;
-}
+int queue_size(Queue* queue);
 
 #endif //AGENTV2_TASKQUEUE_H

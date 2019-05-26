@@ -3,7 +3,7 @@
 // update v1.1 5/18 1.更新recv write函数的size参数（缓冲区大小）以及缓冲区变量名 #bug#
 //                  2.实现probe端指定data大小的功能
 //        v1.2 5/19 1.更新epoll多路复用功能
-//              todo 退出机制，线程退出，套接字关闭
+//              todo epoll退出机制，套接字关闭（需要用到半关闭吗？）
 //
 
 #include "TCPServer.h"
