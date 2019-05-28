@@ -22,7 +22,9 @@ int main(int argc, char* argv[]){
     struct  sockaddr_in serv_adr, clnt_adr;
     int clnt_adr_sz;
     int clnt_count = 0;
+    Clnt_info clnt_info;
 
+    bzero(&clnt_info,0);
 
     struct  epoll_event *ep_events;
     struct  epoll_event event;
@@ -84,10 +86,12 @@ int main(int argc, char* argv[]){
                 // todo
                 clnt_adr_sz = sizeof(clnt_adr);
                 clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
+                clnt_info.fd = clnt_sock;
+                clnt_info.clnt_adr = clnt_adr;
                 if(clnt_sock > 0){
                     clnt_count++;
                     printf("%d client connect\n", clnt_count);//第clnt_count个客户端连接
-                    Add_Task(&pool,clnt_sock);
+                    Add_Task(&pool,clnt_info);
                 }else{
                     puts("accept() error\n");
                 }

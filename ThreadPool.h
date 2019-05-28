@@ -21,7 +21,7 @@ char* Generate_str(char* pointer, int n);
 
 void Init_Thread_pool(ThreadPool* pool, Queue* queue);
 
-void Add_Task(ThreadPool* pool, int clnt_sock);
+void Add_Task(ThreadPool* pool, Clnt_info clnt_info);
 
 
 void* pthread_func(void* arg);

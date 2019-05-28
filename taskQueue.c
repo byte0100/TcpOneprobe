@@ -8,24 +8,23 @@ void queue_init(Queue *queue){
     queue->front = 0;
     queue->rear = 0;
     queue->size = 0;
-    bzero(queue->fd, sizeof(queue->fd));
+    bzero(queue->clnt_info, sizeof(queue->clnt_info));
 }
 
-bool queue_add(Queue* queue, int clnt_sock){
+bool queue_add(Queue* queue, Clnt_info clnt_info){
     if (queue->size == MAX_LINK) return  false; //队满
-    queue->fd[queue->rear] = clnt_sock;
+    queue->clnt_info[queue->rear] = clnt_info;
     queue->rear = (queue->rear + 1) % MAX_LINK;
     queue->size++;
     return  true;
 }
 
-int queue_pop(Queue* queue){    //返回队尾元素
+int queue_pop(Queue* queue, Clnt_info* clnt_info){    //返回队尾元素
     if (queue->size == 0) return -1; //队空
-    int temp = -1;
-    temp = queue->fd[queue->front];
+    *clnt_info = queue->clnt_info[queue->front];
     queue->front = (queue->front + 1) % MAX_LINK;
     queue->size--;
-    return temp;
+    return 0;
 }
 
 int queue_size(Queue* queue){   //队列当前长度
