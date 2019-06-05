@@ -65,7 +65,7 @@ void* pthread_func(void* arg){
         if(clnt_info.log_flag == 1){
              dprintf(clnt_info.log_fd,"%04d-%02d-%02d %02d:%02d:%02d:%03ld:%3ld Client %s:%d connected Thread %ld\n",
                    (time_tm->tm_year + 1900),time_tm->tm_mon,time_tm->tm_mday ,time_tm->tm_hour,time_tm->tm_min,
-                   time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.fd,tid);
+                   time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.clnt_adr.sin_port,tid);
 
         }
 
@@ -115,7 +115,7 @@ void* pthread_func(void* arg){
         if(clnt_info.log_flag == 1){
              dprintf(clnt_info.log_fd,"%04d-%02d-%02d %02d:%02d:%02d:%03ld:%03ld Client %s:%d disconnected Thread %ld quit\n",
                    (time_tm->tm_year + 1900),time_tm->tm_mon,time_tm->tm_mday ,time_tm->tm_hour,time_tm->tm_min,
-                   time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.fd,tid);
+                   time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.clnt_adr.sin_port,tid);
 
         }
 //        printf("thread quit\n");

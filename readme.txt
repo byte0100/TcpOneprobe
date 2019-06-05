@@ -6,8 +6,10 @@ log日志 文件名：testclient.log
 关闭agent:
 sh killagent.sh
 
-testclient 启动
-./testclient <server_ip> <port> <datasize>
+testclient_fork 启动
+编译
+gcc testclient_fork.c -o testclientfork
+./testclientfork <server_ip> <port> <datasize> <nchildren>
 <datasize>每轮测量数据总大小
 
 make clean
