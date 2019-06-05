@@ -5,16 +5,19 @@
 #include "TCPServer.h"
 #include "MsgFormat.h"
 
-#define  DATA_SIZE 512 //测试客户端 指定生成的data总大小
+//#define  DATA_SIZE 512 //测试客户端 指定生成的data总大小
 
 int main(int argc, char* argv[]){
     int sock;
     struct sockaddr_in serv_addr;
 
-    if(argc!=3){
-        printf("Usage: %s <IP> <port>\n", argv[0]);
-        exit(1);
+    if(argc!=4){
+        printf("Usage: %s <IP> <port> <packetsize> \n", argv[0]);
+        exit(-1);
     }
+
+    int packetsize;
+    packetsize = atoi(argv[3]);
 
     sock = socket(PF_INET, SOCK_STREAM, 0);
     if(sock == -1){
@@ -34,9 +37,11 @@ int main(int argc, char* argv[]){
     memset(&myMsg1,0, sizeof(myMsg1));
     strcpy(myMsg1.messageHeader,"CC_O");
     myMsg1.controlMask = CONTROL_INIT;
-    myMsg1.dataSize = DATA_SIZE;
+    myMsg1.dataSize = packetsize;
     char buf[sizeof(myMsg1)] = {0};
-    char recvBuf[DATA_SIZE] = {0};
+//    char recvBuf[packetsize] = {0};
+    char* recvBuf = (char*)malloc(packetsize);
+    bzero(recvBuf,packetsize);
     memcpy(buf,&myMsg1, sizeof(myMsg1));
     int ret = send(sock,buf, sizeof(myMsg1),0);
     printf("send_init size = %d\n", ret);
@@ -44,7 +49,7 @@ int main(int argc, char* argv[]){
         error_handling("write() error");
     }
 
-    ret = recv(sock,recvBuf, sizeof(recvBuf),0);
+    ret = recv(sock,recvBuf, packetsize,0);
     if(ret < 0){
         error_handling("write() error");
     }
@@ -63,8 +68,8 @@ int main(int argc, char* argv[]){
         error_handling("write() error");
     }
     int pos = 0;
-    while(pos < DATA_SIZE){
-        ret = recv(sock,recvBuf+pos, sizeof(recvBuf),0);
+    while(pos < packetsize){
+        ret = recv(sock,recvBuf+pos, packetsize,0);
         pos += ret;
     }
 //    ret = recv(sock,recvBuf, sizeof(recvBuf),0);

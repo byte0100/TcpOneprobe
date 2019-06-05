@@ -60,10 +60,15 @@ void* pthread_func(void* arg){
 
         pthread_t tid;
         tid = pthread_self();
-        //“ts0, Client IP:Port connected, thread thread_id”
-        printf("%04d-%02d-%02d %02d:%02d:%02d:%03ld:%3ld Client %s:%d connected Thread %ld\n",
-                (time_tm->tm_year + 1900),time_tm->tm_mon,time_tm->tm_mday ,time_tm->tm_hour,time_tm->tm_min,
-                time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.fd,tid);
+
+        //“ts0, Client IP:Port connected, thread thread_id” log func
+        if(clnt_info.log_flag == 1){
+             dprintf(clnt_info.log_fd,"%04d-%02d-%02d %02d:%02d:%02d:%03ld:%3ld Client %s:%d connected Thread %ld\n",
+                   (time_tm->tm_year + 1900),time_tm->tm_mon,time_tm->tm_mday ,time_tm->tm_hour,time_tm->tm_min,
+                   time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.fd,tid);
+
+        }
+
         int str_len;
         int dataSize = 0; // 生成的data总大小
         MsgHeader* clnt_msgheader = (MsgHeader*)malloc(sizeof(MsgHeader));
@@ -106,9 +111,12 @@ void* pthread_func(void* arg){
         gettimeofday(&tv,NULL);
         time_tm = localtime(&tv.tv_sec);
         //"ts1, Client IP:Port disconnected, thread thread_id quit"
-        printf("%04d-%02d-%02d %02d:%02d:%02d:%03ld:%03ld Client %s:%d disconnected Thread %ld quit\n",
-                (time_tm->tm_year + 1900),time_tm->tm_mon,time_tm->tm_mday ,time_tm->tm_hour,time_tm->tm_min,
-               time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.fd,tid);
+        if(clnt_info.log_flag == 1){
+             dprintf(clnt_info.log_fd,"%04d-%02d-%02d %02d:%02d:%02d:%03ld:%03ld Client %s:%d disconnected Thread %ld quit\n",
+                   (time_tm->tm_year + 1900),time_tm->tm_mon,time_tm->tm_mday ,time_tm->tm_hour,time_tm->tm_min,
+                   time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.fd,tid);
+
+        }
 //        printf("thread quit\n");
         return NULL;
     }

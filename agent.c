@@ -3,8 +3,7 @@
 // update v1.1 5/18 1.更新recv write函数的size参数（缓冲区大小）以及缓冲区变量名 #bug#
 //                  2.实现probe端指定data大小的功能
 //        v1.2 5/19 1.更新epoll多路复用功能
-//              todo epoll退出机制，套接字关闭（需要用到半关闭吗？）
-//
+//              // todo 测试高并发，日志系统，代码规范，开发设计文档
 
 #include "TCPServer.h"
 #include "MsgFormat.h"
@@ -36,10 +35,9 @@ int main(int argc, char* argv[]){
     struct timeval tv;
     socklen_t optlen;
 
-    if(argc != 2){
-        printf("Usage : %s <port>\n", argv[0]);
-        exit(1);
-    }
+//    if(argc != 3){
+//        printf("Usage : %s <port> <-log>\n", argv[0]);
+//    }
 
     serv_sock = socket(PF_INET, SOCK_STREAM, 0);
     if (serv_sock < 0){
@@ -88,6 +86,11 @@ int main(int argc, char* argv[]){
                 clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
                 clnt_info.fd = clnt_sock;
                 clnt_info.clnt_adr = clnt_adr;
+                if(strcmp(argv[2],"-log") == 0){
+                    clnt_info.log_flag = 1;
+                    int log_fd = open("./testclient.log",O_RDWR|O_APPEND|O_CREAT,0666);
+                    clnt_info.log_fd = log_fd;
+                } else  clnt_info.log_flag = 0;
                 if(clnt_sock > 0){
                     clnt_count++;
                     printf("%d client connect\n", clnt_count);//第clnt_count个客户端连接
