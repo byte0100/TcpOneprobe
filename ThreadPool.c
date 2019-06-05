@@ -98,6 +98,7 @@ void* pthread_func(void* arg){
 
                 if(clnt_msgheader->controlMask == CONTROL_ACK){
                     send(clnt_info.fd, data, dataSize, 0);
+                    printf("CONTROL_ACK, Thread id = %ld,send = %d\n",tid,str_len); //检查是否到达CONTROL_ACK
                 }
 
                 if(clnt_msgheader->controlMask == CONTROL_GET){

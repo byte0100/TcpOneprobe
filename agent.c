@@ -48,8 +48,20 @@ int main(int argc, char* argv[]){
     tv.tv_sec = 10;
     tv.tv_usec = 0;
     if(setsockopt(serv_sock,SOL_SOCKET,SO_RCVTIMEO,&tv,optlen) == -1){
-        error_handling("setsockopt() error");
+        error_handling("setsockopt_SO_RCVTIMEO() error");
     }
+    int snd_buf = 536*60;
+    if(setsockopt(serv_sock,SOL_SOCKET,SO_SNDBUF,(void*)&snd_buf, sizeof(snd_buf))){
+        error_handling("setsockopt_SO_SNDBUF() error");
+    }
+
+    socklen_t  len;
+    len = sizeof(snd_buf);
+    if(getsockopt(serv_sock,SOL_SOCKET,SO_SNDBUF,(void*)&snd_buf,&len)){
+        error_handling("getsockopt() error");
+    }
+    printf("Send buffer size:%d \n", snd_buf);
+
 
     memset(&serv_adr, 0, sizeof(serv_adr));
     serv_adr.sin_family = AF_INET;
@@ -81,7 +93,6 @@ int main(int argc, char* argv[]){
         }
         for(int i =0; i<event_cnt; i++){
             if(ep_events[i].data.fd == serv_sock){
-                // todo
                 clnt_adr_sz = sizeof(clnt_adr);
                 clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_adr, &clnt_adr_sz);
                 clnt_info.fd = clnt_sock;

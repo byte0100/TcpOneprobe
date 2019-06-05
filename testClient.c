@@ -12,12 +12,12 @@ int main(int argc, char* argv[]){
     struct sockaddr_in serv_addr;
 
     if(argc!=4){
-        printf("Usage: %s <IP> <port> <packetsize> \n", argv[0]);
+        printf("Usage: %s <IP> <port> <datasize> \n", argv[0]);
         exit(-1);
     }
 
-    int packetsize;
-    packetsize = atoi(argv[3]);
+    int datasize;
+    datasize = atoi(argv[3]);
 
     sock = socket(PF_INET, SOCK_STREAM, 0);
     if(sock == -1){
@@ -37,11 +37,11 @@ int main(int argc, char* argv[]){
     memset(&myMsg1,0, sizeof(myMsg1));
     strcpy(myMsg1.messageHeader,"CC_O");
     myMsg1.controlMask = CONTROL_INIT;
-    myMsg1.dataSize = packetsize;
+    myMsg1.dataSize = datasize;
     char buf[sizeof(myMsg1)] = {0};
 //    char recvBuf[packetsize] = {0};
-    char* recvBuf = (char*)malloc(packetsize);
-    bzero(recvBuf,packetsize);
+    char* recvBuf = (char*)malloc(datasize);
+    bzero(recvBuf,datasize);
     memcpy(buf,&myMsg1, sizeof(myMsg1));
     int ret = send(sock,buf, sizeof(myMsg1),0);
     printf("send_init size = %d\n", ret);
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]){
         error_handling("write() error");
     }
 
-    ret = recv(sock,recvBuf, packetsize,0);
+    ret = recv(sock,recvBuf, datasize,0);
     if(ret < 0){
         error_handling("write() error");
     }
@@ -68,8 +68,8 @@ int main(int argc, char* argv[]){
         error_handling("write() error");
     }
     int pos = 0;
-    while(pos < packetsize){
-        ret = recv(sock,recvBuf+pos, packetsize,0);
+    while(pos < datasize){
+        ret = recv(sock,recvBuf+pos, datasize,0);
         pos += ret;
     }
 //    ret = recv(sock,recvBuf, sizeof(recvBuf),0);
