@@ -7,8 +7,8 @@ log日志 文件名：testclient.log
 sh killagent.sh
 
 testclient 启动
-./testclient <server_ip> <port> <packetsize>
-<packetsize>是指每个报文的数据域大小，不是总大小
+./testclient <server_ip> <port> <datasize>
+<datasize>每轮测量数据总大小
 
 make clean
 make
