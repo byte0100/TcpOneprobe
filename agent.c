@@ -29,15 +29,13 @@ int main(int argc, char* argv[]){
     struct  epoll_event event;
     int epfd, event_cnt;
 
+    /* 初始化线程池 */
     queue_init(&queue);
     Init_Thread_pool(&pool,&queue);
 
     struct timeval tv;
     socklen_t optlen;
 
-//    if(argc != 3){
-//        printf("Usage : %s <port> <-log>\n", argv[0]);
-//    }
 
     serv_sock = socket(PF_INET, SOCK_STREAM, 0);
     if (serv_sock < 0){
@@ -105,6 +103,7 @@ int main(int argc, char* argv[]){
                 if(clnt_sock > 0){
                     clnt_count++;
                     printf("%d client connect\n", clnt_count);//第clnt_count个客户端连接
+                    clnt_info.clnt_id = clnt_count;
                     Add_Task(&pool,clnt_info);
                 }else{
                     puts("accept() error\n");

@@ -38,10 +38,12 @@ int main(int argc, char* argv[]){
     strcpy(myMsg1.messageHeader,"CC_O");
     myMsg1.controlMask = CONTROL_INIT;
     myMsg1.dataSize = datasize;
+
     char buf[sizeof(myMsg1)] = {0};
-//    char recvBuf[packetsize] = {0};
+
     char* recvBuf = (char*)malloc(datasize);
     bzero(recvBuf,datasize);
+
     memcpy(buf,&myMsg1, sizeof(myMsg1));
     int ret = send(sock,buf, sizeof(myMsg1),0);
     printf("send_init size = %d\n", ret);

@@ -17,6 +17,7 @@ typedef  struct clnt_info{
     struct sockaddr_in clnt_adr;      //client address
     int log_flag; //   check log func 1:open 0:close
     int log_fd; //  log file fd
+    int clnt_id; //     client id
 }Clnt_info;
 
 typedef struct  Queue{  //整型循环队列 -》结构数组队列

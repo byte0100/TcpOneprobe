@@ -84,7 +84,7 @@ void* pthread_func(void* arg){
 //            printf("recv size = %d\n", str_len);
             memset(clnt_msgheader,0,msgsize);
             memcpy(clnt_msgheader, msgbuffer, msgsize);
-            printf("recv from client %d messageHeader = %s controlMask = %d dataSize = %d\n", clnt_info.fd, clnt_msgheader->messageHeader,
+            printf("recv from client %d messageHeader = %s controlMask = %d dataSize = %d\n", clnt_info.clnt_id, clnt_msgheader->messageHeader,
                    clnt_msgheader->controlMask, clnt_msgheader->dataSize); //检验是否正确解析收到的控制命令
             if(clnt_msgheader->messageHeader[3] == 'O'){
                 if(clnt_msgheader->controlMask == CONTROL_INIT){   //Init
