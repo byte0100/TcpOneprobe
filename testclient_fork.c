@@ -51,7 +51,7 @@ int fork_func(in_addr_t serv_ip, uint16_t  serv_port,int datasize){
 
     MsgHeader myMsg2;
     memset(&myMsg2,0, sizeof(myMsg2));
-    strcpy(myMsg2.messageHeader,"CC_O");
+    memcpy(myMsg2.messageHeader,"CC_O",4);
     myMsg2.controlMask = CONTROL_GET;
     memcpy(buf,&myMsg2, sizeof(myMsg2));
     ret = write(sock,buf, sizeof(myMsg2));

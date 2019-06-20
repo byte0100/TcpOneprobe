@@ -7,7 +7,7 @@
 
 // #pragma pack(1) 结构对齐的问题
 
-#define     CONTROL_INIT        1
+#define     CONTROL_INIT       1
 #define     CONTROL_GET         2
 #define     CONTROL_ACK         3
 
