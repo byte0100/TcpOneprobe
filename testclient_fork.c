@@ -22,7 +22,7 @@ int fork_func(in_addr_t serv_ip, uint16_t  serv_port,int datasize){
     if(connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1){
         error_handling("connect() error");
     }
-
+    /************************************************** INIT  ****************************************************/
     MsgHeader myMsg1;
     memset(&myMsg1,0, sizeof(myMsg1));
     strcpy(myMsg1.messageHeader,"CC_O");
@@ -35,13 +35,14 @@ int fork_func(in_addr_t serv_ip, uint16_t  serv_port,int datasize){
     bzero(recvBuf,datasize);
 
     memcpy(buf,&myMsg1, sizeof(myMsg1));
+    /**************************************************INIT SEND*************************************************/
     int ret = send(sock,buf, sizeof(myMsg1),0);
     printf("send_init size = %d\n", ret);
     if(ret < 0){
         printf("error no = %d",ret);
         error_handling("write() error");
     }
-
+    /***************************************************INIT RECV***********************************************/
     ret = recv(sock,recvBuf, datasize,0);
     if(ret < 0){
         printf("error no = %d",ret);
@@ -49,29 +50,26 @@ int fork_func(in_addr_t serv_ip, uint16_t  serv_port,int datasize){
     }
     printf("recv_INIT from server %s\n", recvBuf);
 
+    /******************************************* GET ***********************************************************/
     MsgHeader myMsg2;
     memset(&myMsg2,0, sizeof(myMsg2));
-    memcpy(myMsg2.messageHeader,"CC_O",4);
+    strcpy(myMsg2.messageHeader,"CC_O");
     myMsg2.controlMask = CONTROL_GET;
     memcpy(buf,&myMsg2, sizeof(myMsg2));
     ret = write(sock,buf, sizeof(myMsg2));
-//    if(ret>0){
-//        printf("GET write\n");
-//    }
     if(ret < 0){
         error_handling("write() error");
     }
+    /************************GET RECV***************************************************************************/
     int pos = 0;
     while(pos < datasize){
         ret = recv(sock,recvBuf+pos, datasize,0);
+        if(ret < 0){
+            error_handling("recv2() error");
+        }
         pos += ret;
     }
-//    ret = recv(sock,recvBuf, sizeof(recvBuf),0);
-    if(ret < 0){
-        error_handling("write() error");
-    }
-    printf("recv2 from server ,size of recvBuf = %d\n", pos);
-//    sleep(20);
+    printf("recv2 from server %s ,size of recvBuf = %d\n", recvBuf,pos);
     close(sock);
     return 0;
 
