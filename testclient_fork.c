@@ -70,7 +70,7 @@ int fork_func(in_addr_t serv_ip, uint16_t  serv_port,int datasize){
     if(ret < 0){
         error_handling("write() error");
     }
-    printf("recv2 from server %s,size of recvBuf = %d\n", recvBuf, pos);
+    printf("recv2 from server ,size of recvBuf = %d\n", pos);
 //    sleep(20);
     close(sock);
     return 0;
