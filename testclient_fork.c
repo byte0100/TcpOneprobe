@@ -38,12 +38,14 @@ int fork_func(in_addr_t serv_ip, uint16_t  serv_port,int datasize){
     int ret = send(sock,buf, sizeof(myMsg1),0);
     printf("send_init size = %d\n", ret);
     if(ret < 0){
+        printf("error no = %d",ret);
         error_handling("write() error");
     }
 
     ret = recv(sock,recvBuf, datasize,0);
     if(ret < 0){
-        error_handling("write() error");
+        printf("error no = %d",ret);
+        error_handling("recv() error");
     }
     printf("recv_INIT from server %s\n", recvBuf);
 

@@ -20,7 +20,7 @@ typedef  struct clnt_info{
     int clnt_id; //     client id
 }Clnt_info;
 
-typedef struct  Queue{  //整型循环队列 -》结构数组队列
+typedef struct  Queue{  //结构数组队列
     int front;
     int rear;
     Clnt_info clnt_info[MAX_LINK];
