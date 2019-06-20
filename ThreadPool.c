@@ -122,8 +122,8 @@ void* pthread_func(void* arg){
 
         }
 //        printf("thread quit\n");
-        return NULL;
     }
+    return NULL;
 }
 
 char* Generate_str(char* pointer, int n){ //生成指定大小的字符串
