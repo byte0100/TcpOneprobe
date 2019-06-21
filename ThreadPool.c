@@ -121,7 +121,6 @@ void* pthread_func(void* arg){
                    time_tm->tm_sec,tv.tv_usec/1000,tv.tv_usec%1000,inet_ntoa(clnt_info.clnt_adr.sin_addr),clnt_info.clnt_adr.sin_port,tid);
 
         }
-//        printf("thread quit\n");
     }
     return NULL;
 }
