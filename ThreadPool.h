@@ -6,7 +6,7 @@
 #define AGENTV2_THREADPOOL_H
 
 #include "taskQueue.h"
-#define MAX_THREADPOOL_SIZE 800
+#define MAX_THREADPOOL_SIZE 1200    //todo bug 重入？
 
 typedef struct ThreadPool{
     pthread_t pid[MAX_THREADPOOL_SIZE];     //线程池

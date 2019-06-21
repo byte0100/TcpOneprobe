@@ -3,7 +3,7 @@
 // update v1.1 5/18 1.更新recv write函数的size参数（缓冲区大小）以及缓冲区变量名 #bug#
 //                  2.实现probe端指定data大小的功能
 //        v1.2 5/19 1.更新epoll多路复用功能
-//              // todo 测试高并发，日志系统，代码规范，开发设计文档
+//              // todo 测试高并发（不行），日志系统，代码规范，开发设计文档
 
 #include "TCPServer.h"
 #include "MsgFormat.h"
